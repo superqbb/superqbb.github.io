@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on Like go</title>
+    <link>https://likego.club/categories/</link>
+    <description>Recent content in Categories on Like go</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>superqbb</copyright>
+    <lastBuildDate>Thu, 07 Nov 2019 18:19:48 +0800</lastBuildDate>
+    
+	<atom:link href="https://likego.club/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>WEB安全</title>
+      <link>https://likego.club/categories/web%E5%AE%89%E5%85%A8/</link>
+      <pubDate>Thu, 07 Nov 2019 18:19:48 +0800</pubDate>
+      
+      <guid>https://likego.club/categories/web%E5%AE%89%E5%85%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://likego.club/categories/golang/</link>
+      <pubDate>Sun, 27 Oct 2019 03:19:48 +0800</pubDate>
+      
+      <guid>https://likego.club/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

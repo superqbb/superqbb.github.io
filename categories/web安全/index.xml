@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>WEB安全 on Like go</title>
+    <link>https://likego.club/categories/web%E5%AE%89%E5%85%A8/</link>
+    <description>Recent content in WEB安全 on Like go</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>superqbb</copyright>
+    <lastBuildDate>Thu, 07 Nov 2019 18:19:48 +0800</lastBuildDate>
+    
+	<atom:link href="https://likego.club/categories/web%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Golang的JWT实战指南</title>
+      <link>https://likego.club/posts/2019/11/golang%E7%9A%84jwt%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Thu, 07 Nov 2019 18:19:48 +0800</pubDate>
+      
+      <guid>https://likego.club/posts/2019/11/golang%E7%9A%84jwt%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/</guid>
+      <description>[TOC]
+一、JWT介绍 1.1 什么是JSON Web Token? JSON Web令牌（JWT）是一个开放标准（RFC 7519），它定义了一种协议且以自包含的方式在各方之间安全地传输JSON信息。由于此信息是经过数字签名的，因此可以被验证和信任。可以使用加密算法（如HMAC算法）或使用RSA或ECDSA的公钥/私钥对对JWT进行签名。
+尽管可以对JWT进行加密以在双方之间提供保密性，但我们将重点关注已 签发的 令牌。已签发的令牌可以验证其中包含的声明的 完整性 ，而加密的令牌则将这些声明 隐藏 在其他方的面前。当使用公钥/私钥对对令牌进行签名时，签名还证明只有持有私钥的一方才是对其进行签名的一方。
+1.2 JWT的使用场景  授权：这是使用JWT的最常见方案。一旦用户登录，每个后续请求将包括JWT，从而允许用户访问该令牌允许的路由，服务和资源。单点登陆(SSO)是当今广泛使用JWT的一项功能，因为它的开销很小并且可以在不同的域中轻松使用。 信息交换：JSON Web令牌是在各方之间安全地传输信息的好方法。因为可以对JWT进行签名（例如，使用公钥/私钥对），所以您可以确定发送方的身份。另外，由于签名是使用header和playload计算的，因此您还可以验证内容是否未被篡改。  1.3 JSON Web令牌结构 JSON Web令牌由三部分组成的轻量级令牌，这些部分由点（.）分隔，分别是：
+ Header 头 Payload 信息载体 Signature 签名  因此，JWT的格式一般如下所示：
+xxxxx.yyyyy.zzzzz
+Header 标头通常由两部分组成：令牌的类型（即JWT）和所使用的签名算法，例如HMAC SHA256或RSA。 例如：
+{ &amp;quot;alg&amp;quot;: &amp;quot;HS256&amp;quot;, &amp;quot;typ&amp;quot;: &amp;quot;JWT&amp;quot; }  然后，这个JSON会被Base64Url编码以放在JWT的第一部分。
+Playload 令牌的第二部分是Playload，其中包含声明。声明是有关实体（通常是用户信息）和其他数据的声明。有以下三种类型：registered, public, and private。
+ Registered claims：这些是一组非强制性的但建议使用的预定义声明，以提供一组有用的，可互操作的权利要求。其中一些是： iss（签名签发者）， exp（到期时间）， sub（主题）， aud（受众）和 其他 &amp;gt; 值得注意的是，由于JWT的轻量级，这些声明都是只有三个字符长度的
+ Public Claims：使用JWT的人可以随意定义这些声明。但是为避免冲突，应在IANA JSON Web令牌注册表中定义它们，或将其定义为命名空间不冲突的URI。</description>
+    </item>
+    
+  </channel>
+</rss>

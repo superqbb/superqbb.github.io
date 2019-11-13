@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>golang on Like go</title>
+    <link>https://likego.club/categories/golang/</link>
+    <description>Recent content in golang on Like go</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>superqbb</copyright>
+    <lastBuildDate>Sun, 27 Oct 2019 03:19:48 +0800</lastBuildDate>
+    
+	<atom:link href="https://likego.club/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Golang语法特点</title>
+      <link>https://likego.club/posts/2019/10/golang%E8%AF%AD%E6%B3%95%E7%89%B9%E7%82%B9/</link>
+      <pubDate>Sun, 27 Oct 2019 03:19:48 +0800</pubDate>
+      
+      <guid>https://likego.club/posts/2019/10/golang%E8%AF%AD%E6%B3%95%E7%89%B9%E7%82%B9/</guid>
+      <description>1、Golang关键字 Golang的语法整体来说比较简洁，风格高度统一。 Golang只有25个关键字
+   break case chan const continue     default defer else fallthrough for   func go goto if import   interface map package range return   select struct switch type var    语法简单，上手速度快，由于编程风格的统一，因此在代码review，浏览其他开源的golang项目时，会有非常熟悉的感觉。
+2、自动识别变量类型 sum := 10 str := &amp;quot;hello word&amp;quot; //上述语句简化了变量声明与赋值 var sum int sum = 10 var str string str = “hello word”  3、for表达式 package main import &amp;quot;fmt&amp;quot; func main(){ sum := 0 for index :=0; index &amp;lt; 10 ; index++ { sum += index } fmt.</description>
+    </item>
+    
+  </channel>
+</rss>

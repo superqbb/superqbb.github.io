@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="YongKang.H ">
+<meta name="description"
+    content="1、Golang关键字 Golang的语法整体来说比较简洁，风格高度统一。 Golang只有25个关键字
+   break case chan const continue     default defer else fallthrough for   func go goto if import   interface map package range return   select struct switch type var    语法简单，上手速度快，由于编程风格的统一，因此在代码review，浏览其他开源的golang项目时，会有非常熟悉的感觉。
+2、自动识别变量类型 sum := 10 str := &amp;quot;hello word&amp;quot; //上述语句简化了变量声明与赋值 var sum int sum = 10 var str string str = “hello word”  3、for表达式 package main import &amp;quot;fmt&amp;quot; func main(){ sum := 0 for index :=0; index &amp;lt; 10 ; index&#43;&#43; { sum &#43;= index } fmt." />
+<meta name="keywords" content="golang programming" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://likego.club/posts/2019/10/golang%E8%AF%AD%E6%B3%95%E7%89%B9%E7%82%B9/" />
+
+
+<title>
+    
+    Golang语法特点 :: Like go  — like coding,like working,love life
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="https://likego.club/main.min.73f55a8d452be4a71b2960620b80252cf69abd84d63fe7501abf0a39b1a70a78.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://likego.club/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://likego.club/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://likego.club/favicon-16x16.png">
+<link rel="manifest" href="https://likego.club/site.webmanifest">
+<link rel="mask-icon" href="https://likego.club/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="https://likego.club/favicon.ico">
+<meta name="theme-color" content="#252627"><meta itemprop="name" content="Golang语法特点">
+<meta itemprop="description" content="1、Golang关键字 Golang的语法整体来说比较简洁，风格高度统一。 Golang只有25个关键字
+   break case chan const continue     default defer else fallthrough for   func go goto if import   interface map package range return   select struct switch type var    语法简单，上手速度快，由于编程风格的统一，因此在代码review，浏览其他开源的golang项目时，会有非常熟悉的感觉。
+2、自动识别变量类型 sum := 10 str := &quot;hello word&quot; //上述语句简化了变量声明与赋值 var sum int sum = 10 var str string str = “hello word”  3、for表达式 package main import &quot;fmt&quot; func main(){ sum := 0 for index :=0; index &lt; 10 ; index&#43;&#43; { sum &#43;= index } fmt.">
+
+
+<meta itemprop="datePublished" content="2019-10-27T03:19:48&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-27T03:19:48&#43;08:00" />
+<meta itemprop="wordCount" content="689">
+
+
+
+<meta itemprop="keywords" content="golang基础," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://likego.club/"/>
+
+<meta name="twitter:title" content="Golang语法特点"/>
+<meta name="twitter:description" content="1、Golang关键字 Golang的语法整体来说比较简洁，风格高度统一。 Golang只有25个关键字
+   break case chan const continue     default defer else fallthrough for   func go goto if import   interface map package range return   select struct switch type var    语法简单，上手速度快，由于编程风格的统一，因此在代码review，浏览其他开源的golang项目时，会有非常熟悉的感觉。
+2、自动识别变量类型 sum := 10 str := &quot;hello word&quot; //上述语句简化了变量声明与赋值 var sum int sum = 10 var str string str = “hello word”  3、for表达式 package main import &quot;fmt&quot; func main(){ sum := 0 for index :=0; index &lt; 10 ; index&#43;&#43; { sum &#43;= index } fmt."/>
+
+
+
+<meta property="article:section" content="golang" />
+
+<meta property="article:published_time" content="2019-10-27 03:19:48 &#43;0800 &#43;0800" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://likego.club/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor" style=""></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://likego.club/about">About</a></li><li><a href="https://likego.club/posts">Posts</a></li><li><a href="https://likego.club/tags">Tags</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>4 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title"><a href="https://likego.club/posts/2019/10/golang%E8%AF%AD%E6%B3%95%E7%89%B9%E7%82%B9/">Golang语法特点</a></h1>
+
+            
+
+            <div class="post-content">
+                
+
+<h3 id="1-golang关键字">1、Golang关键字</h3>
+
+<p>Golang的语法整体来说比较简洁，风格高度统一。
+Golang只有25个关键字</p>
+
+<table>
+<thead>
+<tr>
+<th>break</th>
+<th>case</th>
+<th>chan</th>
+<th>const</th>
+<th>continue</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>default</td>
+<td>defer</td>
+<td>else</td>
+<td>fallthrough</td>
+<td>for</td>
+</tr>
+
+<tr>
+<td>func</td>
+<td>go</td>
+<td>goto</td>
+<td>if</td>
+<td>import</td>
+</tr>
+
+<tr>
+<td>interface</td>
+<td>map</td>
+<td>package</td>
+<td>range</td>
+<td>return</td>
+</tr>
+
+<tr>
+<td>select</td>
+<td>struct</td>
+<td>switch</td>
+<td>type</td>
+<td>var</td>
+</tr>
+</tbody>
+</table>
+
+<p>语法简单，上手速度快，由于编程风格的统一，因此在代码review，浏览其他开源的golang项目时，会有非常熟悉的感觉。</p>
+
+<h3 id="2-自动识别变量类型">2、自动识别变量类型</h3>
+
+<pre><code class="language-go">sum := 10
+str := &quot;hello word&quot;
+
+//上述语句简化了变量声明与赋值
+var sum int
+sum = 10
+
+var str string
+str = “hello word”
+</code></pre>
+
+<h3 id="3-for表达式">3、for表达式</h3>
+
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main(){
+         sum := 0
+         for index :=0; index &lt; 10 ; index++ {
+                 sum += index
+         }
+         fmt.Println(&quot;sum is equal to &quot;, sum)
+}
+</code></pre>
+
+<p>Golang中没有while关键字，可以使用for进行代替，忽略expression1和expression3：</p>
+
+<pre><code class="language-go">sum := 1
+for sum &lt; 1000 {
+     sum += sum
+}
+</code></pre>
+
+<h3 id="4-go里面switch默认相当于每个case最后带有break">4、Go里面switch默认相当于每个case最后带有break</h3>
+
+<p>Go的switch非常灵活，表达式不必是常量或整数，也可以使用多个逗号分隔的方式匹配多个值，执行的过程从上至下，直到找到匹配项；而如果switch没有表达式，它会匹配true。</p>
+
+<pre><code class="language-go">i := 10
+switch i/10 {
+    case 1:
+             fmt.Println(&quot;i is equal to 1&quot;)
+    case 2, 3, 4:
+             fmt.Println(&quot;i is equal to 2, 3 or 4&quot;)
+    case 10:
+             fmt.Println(&quot;i is equal to 10&quot;)
+    default:
+             fmt.Println(&quot;All I know is that i is an integer&quot;)
+}
+</code></pre>
+
+<h3 id="5-切片slice">5、切片slice</h3>
+
+<h3 id="6-函数定义func">6、函数定义func</h3>
+
+<p>函数 <code>func</code>是Go里面的核心设计，它通过关键字 <code>func</code> 来声明，它的格式如下：</p>
+
+<pre><code class="language-go">func funcName( input1 type1, input2 ...type2) (output1 type1, output2 type2) {
+         //这里是处理逻辑代码
+         //返回多个值
+         return value1, value2
+}
+</code></pre>
+
+<ul>
+<li><p>Go函数支持变参，即入参可以是一个不定参数，可以接受多个不确定数量的参数，比如input2</p>
+
+<pre><code class="language-go">func test1(args ...string) { //可以接受任意个string参数
+    for _, v:= range args{
+        fmt.Println(v)
+    }
+}
+func main(){
+var strss= []string{
+        &quot;qwr&quot;,
+        &quot;234&quot;,
+        &quot;yui&quot;,
+        &quot;cvbc&quot;,
+    }
+test1(strss...) //切片被打散传入
+}
+</code></pre></li>
+
+<li><p>Go语言比C更先进的特性，其中一点就是函数能够返回多个值</p></li>
+
+<li><p>如果没有返回值，那么就直接省略最后的返回信息</p></li>
+</ul>
+
+<h3 id="7-defer-延迟语句">7、defer 延迟语句</h3>
+
+<p>Go语言中有种不错的设计，即延迟（defer）语句，你可以在函数中添加多个defer语句。当函数执行到最后时，这些defer语句会按照逆序执行，最后该函数返回。特别是当你在进行一些打开资源的操作时，遇到错误需要提前返回，在返回前你需要关闭相应的资源，不然很容易造成资源泄露等问题。如下代码所示，我们一般写打开一个资源是这样操作的：</p>
+
+<pre><code class="language-go">func ReadWrite() bool {
+         file.Open(&quot;file&quot;)
+         // 做一些工作
+         if failureX {
+                  file.Close()
+                  return false
+         }
+         if failureY {
+                  file.Close()
+                  return false
+         }
+         file.Close()
+         return true
+}
+</code></pre>
+
+<p>我们看到上面有很多重复的代码，如果代码多的时候，还有可能忘记写file.close()。Go的defer有效解决了这个问题。使用它后，不但代码量减少了很多，而且程序变得更优雅。在defer后指定的函数会在函数退出前调用。</p>
+
+<p><strong>代码使用defer改写如下：</strong></p>
+
+<pre><code class="language-go">func ReadWrite() bool {
+        defer fmt.println(&quot;all done&quot;)
+         file.Open(&quot;file&quot;)
+         //open之后，可以马上写一个defer，函数退出前即可把文件关闭
+         defer file.Close()
+         if failureX {
+                  return false
+         }
+         if failureY {
+                  return false
+         }
+         defer fmt.println(&quot;1st defer&quot;)
+         return true
+}
+</code></pre>
+
+<p>值得注意的是，defer执行顺序是先进后出。上面的例子，在函数退出之前，会先打印&rdquo;1st defer&rdquo;，再执行file.Close()，最后打印&rdquo;all done&rdquo;。</p>
+
+<h3 id="8-panic和recover">8、Panic和Recover</h3>
+
+<p>一般来说，我们应该尽可能地使用错误，而不是使用 panic 和 recover
+一般如果函数执行的异常，会抛出一个error类型的返回参数，我们在函数外部对error进行处理即可。</p>
+
+<pre><code class="language-go">
+func foo(param int)(ret int, err error)
+{
+    //若函数正常执行，返回的err为nil，否则返回一个不为nill的error
+    ...  
+}
+
+//调用时的代码
+func main(){
+    n, err := foo(0)
+    if err != nil {
+        //  错误处理
+    } else {
+        // 使用返回值n
+    }
+}
+</code></pre>
+
+<p>但有时候，一些函数不会返回error，而是直接panic或者运行时的panic。Go没有像Java那样的异常机制(try catch)，它不能抛出异常，而是使用了<code>panic</code>和<code>recover</code>机制。<strong>Panic的时候如果程序不使用recover进行异常捕获处理，会导致整个程序退出。</strong></p>
+
+<p>panic 有两个合理的用例。</p>
+
+<ul>
+<li>1、发生了一个不能恢复的错误，此时程序不能继续运行。 一个例子就是 web 服务器无法绑定所要求的端口。在这种情况下，就应该使用 panic，因为如果不能绑定端口，啥也做不了。</li>
+<li>2、发生了一个编程上的错误。 假如我们有一个接收指针参数的方法，而其他人使用 nil 作为参数调用了它。在这种情况下，我们可以使用 panic，因为这是一个编程错误：用 nil 参数调用了一个只能接收合法指针的方法。</li>
+</ul>
+
+<p>8.1 主动panic
+下面这个函数演示了如何在过程中使用panic</p>
+
+<pre><code class="language-go">var user = os.Getenv(&quot;USER&quot;)
+//值得一提的是，golang import一个包后，如果包内有init函数，会自动执行init函数，对包内的资源做一些初始化的工作
+func init() {
+         if user == &quot;&quot; {
+                 //主动使用panic
+                 panic(&quot;no value for $USER&quot;)
+         }
+}
+</code></pre>
+
+<blockquote>
+<p>顺带一提：main函数引入包初始化流程图
+<img src="https://likego.club/images/p48-2358709.png" alt="p48-2358709.png" /></p>
+</blockquote>
+
+<p>8.2 当函数发生 panic 时，它会终止运行，在执行完所有的延迟函数后，程序控制返回到该函数的调用方。</p>
+
+<pre><code class="language-go">package main
+
+import (  
+    &quot;fmt&quot;
+)
+
+func fullName(firstName *string, lastName *string) {  
+    defer fmt.Println(&quot;deferred call in fullName&quot;)
+    if firstName == nil {
+        panic(&quot;runtime error: first name cannot be nil&quot;)
+    }
+    if lastName == nil {
+        panic(&quot;runtime error: last name cannot be nil&quot;)
+    }
+    fmt.Printf(&quot;%s %s\n&quot;, *firstName, *lastName)
+    fmt.Println(&quot;returned normally from fullName&quot;)
+}
+
+func main() {  
+    defer fmt.Println(&quot;deferred call in main&quot;)
+    firstName := &quot;Elon&quot;
+    fullName(&amp;firstName, nil)
+    fmt.Println(&quot;returned normally from main&quot;)
+}
+
+</code></pre>
+
+<blockquote>
+<p>该函数会打印：
+deferred call in fullName<br />
+deferred call in main<br />
+panic: runtime error: last name cannot be nil
+goroutine 1 [running]:<br />
+main.fullName(0x1042bf90, 0x0)<br />
+    /tmp/sandbox060731990/main.go:13 +0x280
+main.main()<br />
+    /tmp/sandbox060731990/main.go:22 +0xc0</p>
+</blockquote>
+
+<p>8.3 <code>recover</code> 是一个内建函数，用于重新获得 <code>panic</code> 协程的控制。
+值得注意的是：<strong>只有在延迟函数的内部，调用 recover 才有用。</strong>
+在延迟函数内调用 recover，可以取到 panic 的错误信息，并且停止 panic 续发事件（Panicking Sequence），程序运行恢复正常。如果在延迟函数的外部调用 recover，就不能停止 panic 续发事件。</p>
+
+<p>下面这个函数检查作为其参数的函数在执行时是否会产生panic：</p>
+
+<pre><code class="language-go">func throwsPanic(f func()) (b bool) {
+         defer func() {
+                 if x := recover(); x != nil {
+                          b = true
+                 }
+         }()
+         f() //执行函数f，如果f中出现了panic，那么就可以恢复回来
+         return
+}
+</code></pre>
+
+<h3 id="9-go语言中面向对象编程">9、go语言中面向对象编程</h3>
+
+<p>下面的例子演示了golang中定义对象，定义public、private属性，对象函数的方法</p>
+
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type Human struct {
+     name string
+     age int
+     phone string
+}
+
+type Student struct {
+     Human //匿名字段
+     school string
+}
+
+type Employee struct {
+     Human //匿名字段
+     company string
+}
+
+//Human定义method
+func (h *Human) SayHi() {
+     fmt.Printf(&quot;Hi, I am %s you can call me on %s\n&quot;, h.name, h.phone)
+}
+
+
+
+//Employee的method重写Human的method
+func (e *Employee) SayHi() {
+     fmt.Printf(&quot;Hi, I am %s, I work at %s. Call me on %s\n&quot;, e.name,
+     e.company, e.phone) //Yes you can split into 2 lines here.
+}
+
+func main() {
+     mark := Student{Human{&quot;Mark&quot;, 25, &quot;222-222-YYYY&quot;}, &quot;MIT&quot;}
+     sam := Employee{Human{&quot;Sam&quot;, 45, &quot;111-888-XXXX&quot;}, &quot;Golang Inc&quot;}
+     mark.SayHi()
+     sam.SayHi()
+}
+</code></pre>
+
+<p>Go里面的面向对象是如此的简单，没有任何的私有、公有关键字，通过大小写来实现(大写开头的为公有，小写开头的为私有)，方法也同样适用这个原则。</p>
+
+<h3 id="10-非侵入式接口">10、非侵入式接口</h3>
+
+<p>编译时对“引用”的类和接口定义的依赖，我们称之为“侵入性”的；任何显式的“接口”、“基类”都是侵入性的，不可避免的带来编译期依赖；即使这些依赖很小，但依然有办法而且应该尽可能消除。</p>
+
+<p>我们先来看看java中的实现接口</p>
+
+<pre><code class="language-java">public interface Geometry{
+  public float Area();
+}
+
+public class Rect implements Geometry {
+   ...
+   @override
+   public float Area(){
+     //具体实现
+     ...
+   }
+   
+}
+</code></pre>
+
+<p>Go语言的接口设计是一种非侵入性的设计，作为服务提供者不用预先知道所需要实现的接口，也不用为了实现某一个接口而import一个专门的包。而接口可以被定义在客户端，按需求定义，同时接口与接口之间也可以相互赋值，这样就不用过多忧心接口的粒度，给接口设计带来了很大的灵活性。</p>
+
+<p><strong>animal.go</strong></p>
+
+<pre><code class="language-go">package pkg
+
+import &quot;fmt&quot;
+
+type Animal interface{
+	Eat()
+}
+
+type Bird interface {
+	Fly()
+}
+
+//定义Dog时，我们并没有在代码的任何地方告诉Dog或者Pig这两个struct它们需要去实现Animal接口
+type Dog struct {
+	Weight float64
+}
+
+//Dog实现了Eat接口，即认为是Animal
+func(d *Dog) Eat(){
+	fmt.Printf(&quot;体重%.1fkg的狗正在进食...\n&quot;,d.Weight)
+}
+
+type Pig struct {
+	Weight float64
+}
+
+//Pig实现了Fly接口，即认为是Bird
+func(d *Pig) Fly(){
+	fmt.Printf(&quot;体重%.1fkg的猪正在飞...\n&quot;,d.Weight)
+}
+
+//Pig实现了Fly接口，即认为是Animal
+func(d *Pig) Eat(){
+	fmt.Printf(&quot;体重%.1fkg的猪正在进食...\n&quot;,d.Weight)
+}
+</code></pre>
+
+<p><strong>main.go</strong></p>
+
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/superqbb/GoCourse/Object/pkg&quot;
+)
+
+func Dinner(a pkg.Animal){
+	a.Eat()
+}
+
+func WindCome(b pkg.Bird){
+	b.Fly()
+}
+
+//非侵入式接口演示
+func main(){
+	myDog := &amp;pkg.Dog{Weight:4}
+	myPig := &amp;pkg.Pig{Weight:80}
+
+	//因为Dog,Pig都实现了Animal接口，编译器会自动识别
+	Dinner(myDog)
+	Dinner(myPig)
+
+	fmt.Printf(&quot;风来了...\n&quot;)
+	WindCome(myPig)
+}
+</code></pre>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://likego.club/tags/golang%E5%9F%BA%E7%A1%80">golang基础</a></span>
+                </p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>689 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-10-26 19:19 &#43;0000</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h">Read other posts</span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+                        <span class="button previous">
+                            <a href="https://likego.club/posts/2019/11/golang%E7%9A%84jwt%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/">
+                                <span class="button__icon">←</span>
+                                <span class="button__text">Golang的JWT实战指南</span>
+                            </a>
+                        </span>
+                    
+
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2019</span>
+            
+                <span><a href="https://likego.club/">YongKang.H</a></span>
+            
+            <span>superqbb</span>
+            <span> <a href="https://likego.club/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="https://likego.club/bundle.min.4c3fb12a087ceed4a52cb5d57068a9795c7069617a01ca70f788052ad66e1791779e6c72686e1dc0ca13dc03b0203204b6566bb0dd1ee80de2b7ff4d8fe53db2.js" integrity="sha512-TD&#43;xKgh87tSlLLXVcGipeVxwaWF6Acpw94gFKtZuF5F3nmxyaG4dwMoT3AOwIDIEtlZrsN0e6A3it/9Nj&#43;U9sg=="></script>
+
+
+
+    </body>
+</html>
