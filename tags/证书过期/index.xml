@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>证书过期 on Like go</title>
+    <link>https://likego.club/tags/%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F/</link>
+    <description>Recent content in 证书过期 on Like go</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>superqbb</copyright>
+    <lastBuildDate>Sun, 10 May 2020 03:19:48 +0800</lastBuildDate>
+    
+	<atom:link href="https://likego.club/tags/%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kubernetes集群证书过期解决办法</title>
+      <link>https://likego.club/posts/2020/05/kubernetes%E9%9B%86%E7%BE%A4%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</link>
+      <pubDate>Sun, 10 May 2020 03:19:48 +0800</pubDate>
+      
+      <guid>https://likego.club/posts/2020/05/kubernetes%E9%9B%86%E7%BE%A4%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</guid>
+      <description>一、简述集群异常情况  本地测试环境配置：
+master&amp;amp;node 01: 192.168.188.150
+master&amp;amp;node 02: 192.168.188.160
+master&amp;amp;node 03: 192.168.188.161
+ 今天查看k8s集群情况，发现所有node都处于NotReady状态。
+[root@localhost ~]# kubectl get node NAME STATUS AGE VERSION 192.168.188.150 NotReady 1y v1.6.0 192.168.188.160 NotReady 1y v1.6.0 192.168.188.161 NotReady 1y v1.6.0  登陆master 查看api-server日志
+journalctl -xefu kube-apiserver 5月 10 17:10:47 localhost.localdomain kube-apiserver[2194]: E0510 17:10:47.800829 2194 authentication.go:58] Unable to authenticate the request due to an error: x509: certificate has expired or is not yet valid 5月 10 17:10:47 localhost.</description>
+    </item>
+    
+  </channel>
+</rss>

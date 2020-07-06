@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="YongKang.H ">
+<meta name="description"
+    content="集群配置如下：
+VIP: 10.10.10.11 （由于本地环境的虚拟机只有一个网卡，因此设置VIP为相同网段）
+   主机名 IP 备注     hyk010 10.10.10.81 master01   hyk011 10.10.10.82 master02   hyk012 10.10.10.83 master03   hyk020 10.10.10.84 node01    0、前期准备 关闭防火墙
+systemctl stop firewalld systemctl disable firewalld  关闭sawp
+vi /etc/fstab #/dev/mapper/centos-swap swap swap defaults 0 0  关闭SELINUX
+vi /etc/selinux/config SELINUX=disabled  重启生效
+reboot  (可选) 配置免密码登录。在每个节点都执行ssh-keygen产生公私钥对，都选缺省值，一路回车即可。
+ssh-keygen  (可选) 用ssh-copy-id将本节点的公钥复制到其它节点，如k8s-master节点，需要将公钥复制到k8s-node1、k8s-node2和k8s-node3三个节点，其它节点都要类似操作。
+ssh-copy-id k8s-node1 ssh-copy-id k8s-node2 ssh-copy-id k8s-node3  将主机名添加到hosts文件" />
+<meta name="keywords" content="golang programming" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://likego.club/posts/1/01/" />
+
+
+<title>
+    
+     :: Like go  — like coding,like working,love life
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="https://likego.club/main.min.73f55a8d452be4a71b2960620b80252cf69abd84d63fe7501abf0a39b1a70a78.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://likego.club/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://likego.club/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://likego.club/favicon-16x16.png">
+<link rel="manifest" href="https://likego.club/site.webmanifest">
+<link rel="mask-icon" href="https://likego.club/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="https://likego.club/favicon.ico">
+<meta name="theme-color" content="#252627"><meta itemprop="name" content="">
+<meta itemprop="description" content="集群配置如下：
+VIP: 10.10.10.11 （由于本地环境的虚拟机只有一个网卡，因此设置VIP为相同网段）
+   主机名 IP 备注     hyk010 10.10.10.81 master01   hyk011 10.10.10.82 master02   hyk012 10.10.10.83 master03   hyk020 10.10.10.84 node01    0、前期准备 关闭防火墙
+systemctl stop firewalld systemctl disable firewalld  关闭sawp
+vi /etc/fstab #/dev/mapper/centos-swap swap swap defaults 0 0  关闭SELINUX
+vi /etc/selinux/config SELINUX=disabled  重启生效
+reboot  (可选) 配置免密码登录。在每个节点都执行ssh-keygen产生公私钥对，都选缺省值，一路回车即可。
+ssh-keygen  (可选) 用ssh-copy-id将本节点的公钥复制到其它节点，如k8s-master节点，需要将公钥复制到k8s-node1、k8s-node2和k8s-node3三个节点，其它节点都要类似操作。
+ssh-copy-id k8s-node1 ssh-copy-id k8s-node2 ssh-copy-id k8s-node3  将主机名添加到hosts文件">
+
+
+
+<meta itemprop="wordCount" content="1716">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://likego.club/"/>
+
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="集群配置如下：
+VIP: 10.10.10.11 （由于本地环境的虚拟机只有一个网卡，因此设置VIP为相同网段）
+   主机名 IP 备注     hyk010 10.10.10.81 master01   hyk011 10.10.10.82 master02   hyk012 10.10.10.83 master03   hyk020 10.10.10.84 node01    0、前期准备 关闭防火墙
+systemctl stop firewalld systemctl disable firewalld  关闭sawp
+vi /etc/fstab #/dev/mapper/centos-swap swap swap defaults 0 0  关闭SELINUX
+vi /etc/selinux/config SELINUX=disabled  重启生效
+reboot  (可选) 配置免密码登录。在每个节点都执行ssh-keygen产生公私钥对，都选缺省值，一路回车即可。
+ssh-keygen  (可选) 用ssh-copy-id将本节点的公钥复制到其它节点，如k8s-master节点，需要将公钥复制到k8s-node1、k8s-node2和k8s-node3三个节点，其它节点都要类似操作。
+ssh-copy-id k8s-node1 ssh-copy-id k8s-node2 ssh-copy-id k8s-node3  将主机名添加到hosts文件"/>
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://likego.club/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor" style=""></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://likego.club/about">About</a></li><li><a href="https://likego.club/posts">Posts</a></li><li><a href="https://likego.club/tags">Tags</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>9 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title"><a href="https://likego.club/posts/1/01/"></a></h1>
+
+            
+
+            <div class="post-content">
+                
+
+<p>集群配置如下：</p>
+
+<p>VIP: 10.10.10.11  （由于本地环境的虚拟机只有一个网卡，因此设置VIP为相同网段）</p>
+
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+<th>备注</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>hyk010</td>
+<td>10.10.10.81</td>
+<td>master01</td>
+</tr>
+
+<tr>
+<td>hyk011</td>
+<td>10.10.10.82</td>
+<td>master02</td>
+</tr>
+
+<tr>
+<td>hyk012</td>
+<td>10.10.10.83</td>
+<td>master03</td>
+</tr>
+
+<tr>
+<td>hyk020</td>
+<td>10.10.10.84</td>
+<td>node01</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="0-前期准备">0、前期准备</h3>
+
+<p>关闭防火墙</p>
+
+<pre><code>systemctl stop firewalld
+systemctl disable firewalld
+</code></pre>
+
+<p>关闭sawp</p>
+
+<pre><code>vi /etc/fstab
+#/dev/mapper/centos-swap swap                    swap    defaults        0 0
+</code></pre>
+
+<p>关闭SELINUX</p>
+
+<pre><code>vi /etc/selinux/config
+SELINUX=disabled
+</code></pre>
+
+<p>重启生效</p>
+
+<pre><code>reboot
+</code></pre>
+
+<p>(可选) 配置免密码登录。在每个节点都执行ssh-keygen产生公私钥对，都选缺省值，一路回车即可。</p>
+
+<pre><code>ssh-keygen
+</code></pre>
+
+<p>(可选) 用ssh-copy-id将本节点的公钥复制到其它节点，如k8s-master节点，需要将公钥复制到k8s-node1、k8s-node2和k8s-node3三个节点，其它节点都要类似操作。</p>
+
+<pre><code>ssh-copy-id k8s-node1
+ssh-copy-id k8s-node2
+ssh-copy-id k8s-node3
+</code></pre>
+
+<p>将主机名添加到hosts文件</p>
+
+<pre><code>vim /etc/hosts
+...
+10.10.10.81   hyk010
+10.10.10.82   hyk011
+10.10.10.83   hyk012
+</code></pre>
+
+<h3 id="1-安装kubeadm-kubelet-kubectl">1、安装kubeadm、kubelet、kubectl</h3>
+
+<p>按照官方指引：<a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/</a></p>
+
+<p>其中需要注意的是，安装时需要设置国内yum源。设置方法如下：</p>
+
+<pre><code class="language-shell">cat &lt;&lt;EOF&gt; /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+systemctl enable --now kubelet
+</code></pre>
+
+<p>kubeadm文档：<a href="https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-init/">https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-init/</a></p>
+
+<h3 id="2-下载镜像">2、下载镜像</h3>
+
+<pre><code>kubeadm config images pull --image-repository=registry.aliyuncs.com/google_containers
+</code></pre>
+
+<h3 id="3-为-kube-apiserver-创建负载均衡器">3、为 kube-apiserver 创建负载均衡器</h3>
+
+<p><img src="D:实验室K8S-1.18imagesimage-20200606213619207.png" alt="image-20200606213619207" /></p>
+
+<p>使用keepalived+HAproxy创建负载均衡器</p>
+
+<p>如果使用keepalived源码编译，需要安装以下依赖：</p>
+
+<pre><code>yum -y install gcc gcc-c++ 
+yum install openssl openssl-devel -y
+yum -y install libnl libnl-devel
+yum install -y libnfnetlink-devel
+</code></pre>
+
+<h4 id="配置keepalived">配置keepalived</h4>
+
+<pre><code># 安装keepalived
+yum install -y keepalived
+</code></pre>
+
+<p>本地配置见 <code>集群配置</code></p>
+
+<ul>
+<li>准备一个可用IP用作虚拟IP(VIP):
+
+<ul>
+<li>VIP: 10.10.10.11</li>
+</ul></li>
+<li>负载均衡器会用到3台主机，一主两备的架构
+
+<ul>
+<li>lb1(默认为主): 10.10.10.81</li>
+<li>lb2(默认为备): 10.10.10.82</li>
+<li>lb3(默认为备): 10.10.10.83</li>
+</ul></li>
+</ul>
+
+<p>安装参考：<a href="https://yq.aliyun.com/articles/609851">搭建高可用负载均衡器: haproxy+keepalived</a>  (页面已缓存到本地，见部署参考)</p>
+
+<p>安装后。keepalived的配置路径在<code>/etc/keepalived/keepalived.conf</code></p>
+
+<pre><code class="language-shell"># 启动keepalived
+systemctl start keepalived.service
+# 重启keepalived
+systemctl restart keepalived.service
+# 设为开机启动
+systemctl enable keepalived.service
+</code></pre>
+
+<h4 id="配置haproxy">配置haproxy</h4>
+
+<p>修改默认配置：<code>/etc/haproxy/haproxy.cfg</code>  ，添加API SERVER的高可用地址及端口</p>
+
+<pre><code>#---------------------------------------------------------------------
+# apiserver frontend which proxys to the masters
+#---------------------------------------------------------------------
+frontend apiserver
+    bind *:${APISERVER_DEST_PORT}
+    mode tcp
+    option tcplog
+    default_backend apiserver
+
+#---------------------------------------------------------------------
+# round robin balancing for apiserver
+#---------------------------------------------------------------------
+backend apiserver
+    option httpchk GET /healthz
+    http-check expect status 200
+    mode tcp
+    option ssl-hello-chk
+    balance     roundrobin
+        server ${HOST1_ID} ${HOST1_ADDRESS}:${APISERVER_SRC_PORT} check
+        # [...]
+</code></pre>
+
+<ul>
+<li><code>${APISERVER_DEST_PORT}</code> the port through which Kubernetes will talk to the API Server. (API Server的外部通信端口)</li>
+<li><code>${APISERVER_SRC_PORT}</code> the port used by the API Server instances (后端API Server的真实端口)</li>
+<li><code>${HOST1_ID}</code> a symbolic name for the first load-balanced API Server host (真实后端别名)</li>
+<li><code>${HOST1_ADDRESS}</code> a resolvable address (DNS name, IP address) for the first load-balanced API Server host (真实后端地址)</li>
+<li>additional <code>server</code> lines, one for each load-balanced API Server host</li>
+</ul>
+
+<p>我的配置如下：</p>
+
+<pre><code>$ &gt; cat /etc/haproxy/haproxy.cfg
+... 
+
+#---------------------------------------------------------------------
+# apiserver frontend which proxys to the masters
+#---------------------------------------------------------------------
+frontend apiserver
+    bind *:6444
+    mode tcp
+    option tcplog
+    default_backend apiserver
+
+#---------------------------------------------------------------------
+# round robin balancing for apiserver
+#---------------------------------------------------------------------
+backend apiserver
+    option httpchk GET /healthz
+    http-check expect status 200
+    mode tcp
+    option ssl-hello-chk
+    balance     roundrobin
+        server hyk010 10.10.10.81:6443 check
+        server hyk011 10.10.10.82:6443 check
+		server hyk012 10.10.10.83:6443 check
+</code></pre>
+
+<pre><code>#启动haproxy
+sudo systemctl start haproxy
+sudo systemctl enable haproxy
+</code></pre>
+
+<p>通过VIP访问6443端口</p>
+
+<pre><code>[root@hyk012 keepalived]# curl 10.10.10.11:6443
+curl: (7) Failed connect to 10.10.10.11:6443; Connection refused
+</code></pre>
+
+<blockquote>
+<ol>
+<li><p>添加第一个控制平面节点到负载均衡器并测试连接：</p>
+
+<pre><code class="language-sh">&gt;    nc -v LOAD_BALANCER_IP PORT
+&gt;    # 在本机是
+&gt;    nc -v 10.10.10.11 6443
+&gt;    ```
+&gt;
+&gt;    - 由于 apiserver 尚未运行，预期会出现一个连接拒绝错误。然而超时意味着负载均衡器不能和控制平面节点通信。 如果发生超时，请重新配置负载均衡器与控制平面节点进行通信。
+&gt;
+&gt; 2. 将其余控制平面节点添加到负载均衡器目标组。
+
+
+
+### 使用kubeadm安装控制平面
+
+#### 初始化控制平面：
+
+</code></pre>
+
+<p>shell</p></li>
+</ol>
+
+<p>sudo kubeadm init &ndash;control-plane-endpoint &ldquo;LOAD_BALANCER_DNS:LOAD_BALANCER_PORT&rdquo; &ndash;upload-certs</p>
+</blockquote>
+
+<h1 id="下面是本机所使用的命令">下面是本机所使用的命令</h1>
+
+<p>kubeadm init &ndash;control-plane-endpoint &ldquo;10.10.10.11:6444&rdquo; <br />
+&ndash;upload-certs <br />
+&ndash;image-repository &ldquo;registry.aliyuncs.com/google_containers&rdquo; <br />
+&ndash;kubernetes-version &ldquo;v1.18.3&rdquo;</p>
+
+<pre><code>
+- 您可以使用 `--kubernetes-version` 标志来设置要使用的 Kubernetes 版本。建议将 kubeadm、kebelet、kubectl 和 Kubernetes 的版本匹配。
+- 这个 `--control-plane-endpoint` 标志应该被设置成负载均衡器的地址或 DNS 和端口。
+- 这个 `--upload-certs` 标志用来将在所有控制平面实例之间的共享证书上传到集群。如果正好相反，你更喜欢手动地通过控制平面节点或者使用自动化 工具复制证书，请删除此标志并参考如下部分[证书分配手册](https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/high-availability/#manual-certs)。
+- `--image-repository`  镜像仓库地址，Default: &quot;k8s.gcr.io&quot;。由于国内被墙，换成阿里云的。
+
+##### 第一次执行，报错了
+
+</code></pre>
+
+<p>shell
+[root@hyk010 haproxy]# kubeadm init &ndash;control-plane-endpoint &ldquo;10.10.10.11:6444&rdquo; <br />
+&ndash;upload-certs <br />
+&ndash;image-repository &ldquo;registry.aliyuncs.com/google_containers&rdquo; <br />
+&ndash;kubernetes-version &ldquo;v1.18.3&rdquo;</p>
+
+<p>&hellip;
+[init] Using Kubernetes version: v1.18.3
+[preflight] Running pre-flight checks
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR Swap]: running with swap on is not supported. Please disable swap
+[preflight] If you know what you are doing, you can make a check non-fatal with <code>--ignore-preflight-errors=...</code>
+To see the stack trace of this error execute with &ndash;v=5 or higher</p>
+
+<pre><code>
+可以看出来是因为开启了 swap，而 kubelet 在 1.8 版本以后强制要求 swap 必须关闭。
+
+##### CentOS7关闭swap
+
+</code></pre>
+
+<p>shell</p>
+
+<h1 id="注释-etc-fstab关于swap的配置">注释/etc/fstab关于swap的配置</h1>
+
+<p>$&gt; vim /etc/fstab
+&hellip;
+#/dev/mapper/centos-swap swap                    swap    defaults        0 0</p>
+
+<h1 id="执行如下命令">执行如下命令</h1>
+
+<p>$&gt; echo vm.swappiness=0 &gt;&gt; /etc/sysctl.conf</p>
+
+<h1 id="重启">重启</h1>
+
+<p>$&gt; reboot</p>
+
+<h1 id="验证-swap行均为0">验证(Swap行均为0)</h1>
+
+<p>$&gt; free -m
+              total        used        free      shared  buff/cache   available
+Mem:           1819         176        1443           9         199        1496
+Swap:             0           0           0</p>
+
+<pre><code>
+##### 第二次尝试安装
+&gt; 注：我由于在第一次安装时未完全安装成功，导致有一些软件配置及进程残留。在第二次安装前，需要先停止相关的kubelet，etcd进程，否则会因为端口占用导致二次安装失败。停止相关进程后，还会提示部分配置已存在，将提示中的相关路径文件夹删除即可。
+&gt; systemctl stop kubelet etcd
+
+</code></pre>
+
+<p>shell
+[root@hyk010 lib]# kubeadm init &ndash;control-plane-endpoint &ldquo;10.10.10.11:6444&rdquo; <br />
+&gt; &ndash;upload-certs <br />
+&gt; &ndash;image-repository &ldquo;registry.aliyuncs.com/google_containers&rdquo; <br />
+&gt; &ndash;kubernetes-version &ldquo;v1.18.3&rdquo;</p>
+
+<p>#安装挺快，大概经过4分钟
+&hellip;
+Your Kubernetes control-plane has initialized successfully!</p>
+
+<p>To start using your cluster, you need to run the following as a regular user:</p>
+
+<p>mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config</p>
+
+<p>You should now deploy a pod network to the cluster.
+Run &ldquo;kubectl apply -f [podnetwork].yaml&rdquo; with one of the options listed at:
+  <a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">https://kubernetes.io/docs/concepts/cluster-administration/addons/</a></p>
+
+<p>You can now join any number of the control-plane node running the following command on each as root:</p>
+
+<p>kubeadm join 10.10.10.11:6444 &ndash;token qb9h2n.9s4lr375vvzuq7c0 <br />
+    &ndash;discovery-token-ca-cert-hash sha256:7b19dc59ab0221233321810505cbc08c3de5ed9738c0f327ea66bac50a7ca752 <br />
+    &ndash;control-plane &ndash;certificate-key 0e76851d12cb11c78d98e38e599c79c5ba3c773b5377ea8dc462289f458c1098</p>
+
+<p>Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
+As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
+&ldquo;kubeadm init phase upload-certs &ndash;upload-certs&rdquo; to reload certs afterward.</p>
+
+<p>Then you can join any number of worker nodes by running the following on each as root:</p>
+
+<p>kubeadm join 10.10.10.11:6444 &ndash;token qb9h2n.9s4lr375vvzuq7c0 <br />
+    &ndash;discovery-token-ca-cert-hash sha256:7b19dc59ab0221233321810505cbc08c3de5ed9738c0f327ea66bac50a7ca752</p>
+
+<pre><code>
+注意，看到这句`Your Kubernetes control-plane has initialized successfully!` 说明已经安装成功了。
+
+按照安装说明最后的提示，还需要添加其他master节点、工作节点。
+#### 继续为控制平面，添加master节点
+ssh到其余两个master节点（10.10.10.82，10.10.10.83），执行下面的命令。
+</code></pre>
+
+<h1 id="请注意-证书密钥可以访问集群内敏感数据-请保密">请注意，证书密钥可以访问集群内敏感数据，请保密！</h1>
+
+<h1 id="为了安全起见-将在两个小时内删除上传的证书-如有必要-您可以使用-kubeadm-初始化上">为了安全起见，将在两个小时内删除上传的证书； 如有必要，您可以使用 kubeadm 初始化上</h1>
+
+<h1 id="传证书阶段-之后重新加载证书">传证书阶段，之后重新加载证书。</h1>
+
+<p>kubeadm join 10.10.10.11:6444 &ndash;token qb9h2n.9s4lr375vvzuq7c0 <br />
+    &ndash;discovery-token-ca-cert-hash sha256:7b19dc59ab0221233321810505cbc08c3de5ed9738c0f327ea66bac50a7ca752 <br />
+    &ndash;control-plane &ndash;certificate-key 0e76851d12cb11c78d98e38e599c79c5ba3c773b5377ea8dc462289f458c1098</p>
+
+<pre><code>- 当` --upload-certs` 与 `kubeadm init` 一起使用时，主控制平面的证书被加密并上传到 `kubeadm-certs` 密钥中。
+- 根据提示内容可以得知，当前的证书的有效时间是2个小时。如果后续还要生成证书，可以执行下面的命令：
+</code></pre>
+
+<p>shell
+#使用kubeadm添加node节点操作示例如下：</p>
+
+<h1 id="1-在k8s-master上执行">1、在k8s master上执行</h1>
+
+<p>[root@hyk010 ~]# kubeadm token create
+W0705 14:55:22.947242   40719 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
+u1b23y.uawanlhvtsbzf447</p>
+
+<h1 id="2-得到certificate-key后-然后通过下面命令得到对应的token名称">2、得到certificate key后，然后通过下面命令得到对应的token名称</h1>
+
+<p>[root@hyk010 ~]# kubeadm token list<br />
+TOKEN                     TTL         EXPIRES                     USAGES                   DESCRIPTION                                                EXTRA GROUPS
+u1b23y.uawanlhvtsbzf447   23h         2020-07-06T14:55:22+08:00   authentication,signing   <none>                                                     system:bootstrappers:kubeadm:default-node-token</p>
+
+<h1 id="3-获取ca证书sha256编码hash值">3、获取ca证书sha256编码hash值</h1>
+
+<p>[root@hyk010 ~]# openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed &rsquo;s/^.* //&rsquo;
+7b19dc59ab0221233321810505cbc08c3de5ed9738c0f327ea66bac50a7ca752</p>
+
+<h1 id="3-在新node节点下执行-其中10-10-10-11-6444为api-server地址">3、在新Node节点下执行，其中10.10.10.11:6444为api-server地址</h1>
+
+<p>kubeadm join 10.10.10.11:6444 &ndash;token u1b23y.uawanlhvtsbzf447 <br />
+    &ndash;discovery-token-ca-cert-hash sha256:7b19dc59ab0221233321810505cbc08c3de5ed9738c0f327ea66bac50a7ca752</p>
+
+<pre><code>
+- 还可以在 `init` 期间指定自定义的 `--certificate-key`，以后可以由 `join` 使用。 要生成这样的密钥，可以使用以下命令：
+
+</code></pre>
+
+<p>shell
+  kubeadm alpha certs certificate-key</p>
+
+<pre><code>
+&gt; 记录一下 10.10.10.82 执行的结果，一切顺利
+</code></pre>
+
+<p>[root@hyk011 ~]# kubeadm join 10.10.10.11:6444 &ndash;token qb9h2n.9s4lr375vvzuq7c0 <br />
+    &ndash;discovery-token-ca-cert-hash sha256:7b19dc59ab0221233321810505cbc08c3de5ed9738c0f327ea66bac50a7ca752 <br />
+    &ndash;control-plane &ndash;certificate-key 0e76851d12cb11c78d98e38e599c79c5ba3c773b5377ea8dc462289f458c10980e76851d12cb11c78d98e38e599c79c5ba3c773b5377ea8dc462289f458c1098</p>
+
+<p>[preflight] Running pre-flight checks
+[preflight] Reading configuration from the cluster&hellip;
+[preflight] FYI: You can look at this config file with &lsquo;kubectl -n kube-system get cm kubeadm-config -oyaml&rsquo;
+[preflight] Running pre-flight checks before initializing the new control plane instance
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using &lsquo;kubeadm config images pull&rsquo;
+[download-certs] Downloading the certificates in Secret &ldquo;kubeadm-certs&rdquo; in the &ldquo;kube-system&rdquo; Namespace
+[certs] Using certificateDir folder &ldquo;/etc/kubernetes/pki&rdquo;
+[certs] Generating &ldquo;front-proxy-client&rdquo; certificate and key
+[certs] Generating &ldquo;etcd/server&rdquo; certificate and key
+[certs] etcd/server serving cert is signed for DNS names [hyk011 localhost] and IPs [10.10.10.82 127.0.0.1 ::1]
+[certs] Generating &ldquo;apiserver-etcd-client&rdquo; certificate and key
+[certs] Generating &ldquo;etcd/peer&rdquo; certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [hyk011 localhost] and IPs [10.10.10.82 127.0.0.1 ::1]
+[certs] Generating &ldquo;etcd/healthcheck-client&rdquo; certificate and key
+[certs] Generating &ldquo;apiserver&rdquo; certificate and key
+[certs] apiserver serving cert is signed for DNS names [hyk011 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 10.10.10.82 10.10.10.11]
+[certs] Generating &ldquo;apiserver-kubelet-client&rdquo; certificate and key
+[certs] Valid certificates and keys now exist in &ldquo;/etc/kubernetes/pki&rdquo;
+[certs] Using the existing &ldquo;sa&rdquo; key
+[kubeconfig] Generating kubeconfig files
+[kubeconfig] Using kubeconfig folder &ldquo;/etc/kubernetes&rdquo;
+[endpoint] WARNING: port specified in controlPlaneEndpoint overrides bindPort in the controlplane address
+[kubeconfig] Writing &ldquo;admin.conf&rdquo; kubeconfig file
+[kubeconfig] Writing &ldquo;controller-manager.conf&rdquo; kubeconfig file
+[kubeconfig] Writing &ldquo;scheduler.conf&rdquo; kubeconfig file
+[control-plane] Using manifest folder &ldquo;/etc/kubernetes/manifests&rdquo;
+[control-plane] Creating static Pod manifest for &ldquo;kube-apiserver&rdquo;
+W0614 21:29:33.913013   12311 manifests.go:225] the default kube-apiserver authorization-mode is &ldquo;Node,RBAC&rdquo;; using &ldquo;Node,RBAC&rdquo;
+[control-plane] Creating static Pod manifest for &ldquo;kube-controller-manager&rdquo;
+W0614 21:29:34.054381   12311 manifests.go:225] the default kube-apiserver authorization-mode is &ldquo;Node,RBAC&rdquo;; using &ldquo;Node,RBAC&rdquo;
+[control-plane] Creating static Pod manifest for &ldquo;kube-scheduler&rdquo;
+W0614 21:29:34.122239   12311 manifests.go:225] the default kube-apiserver authorization-mode is &ldquo;Node,RBAC&rdquo;; using &ldquo;Node,RBAC&rdquo;
+[check-etcd] Checking that the etcd cluster is healthy
+[kubelet-start] Downloading configuration for the kubelet from the &ldquo;kubelet-config-1.18&rdquo; ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file &ldquo;/var/lib/kubelet/config.yaml&rdquo;
+[kubelet-start] Writing kubelet environment file with flags to file &ldquo;/var/lib/kubelet/kubeadm-flags.env&rdquo;
+[kubelet-start] Starting the kubelet
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap&hellip;
+[etcd] Announced new etcd member joining to the existing etcd cluster
+[etcd] Creating static Pod manifest for &ldquo;etcd&rdquo;
+[etcd] Waiting for the new etcd member to join the cluster. This can take up to 40s
+{&ldquo;level&rdquo;:&ldquo;warn&rdquo;,&ldquo;ts&rdquo;:&ldquo;2020-06-14T21:30:01.703+0800&rdquo;,&ldquo;caller&rdquo;:&ldquo;clientv3/retry_interceptor.go:61&rdquo;,&ldquo;msg&rdquo;:&ldquo;retrying of unary invoker failed&rdquo;,&ldquo;target&rdquo;:&ldquo;passthrough:///<a href="https://10.10.10.82:2379&quot;,&quot;attempt&quot;:0,&quot;error&quot;:&quot;rpc">https://10.10.10.82:2379&quot;,&quot;attempt&quot;:0,&quot;error&quot;:&quot;rpc</a> error: code = DeadlineExceeded desc = context deadline exceeded&rdquo;}
+[upload-config] Storing the configuration used in ConfigMap &ldquo;kubeadm-config&rdquo; in the &ldquo;kube-system&rdquo; Namespace
+[mark-control-plane] Marking the node hyk011 as control-plane by adding the label &ldquo;node-role.kubernetes.io/master=&rdquo;&rdquo;
+[mark-control-plane] Marking the node hyk011 as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]</p>
+
+<p>This node has joined the cluster and a new control plane instance was created:</p>
+
+<ul>
+<li>Certificate signing request was sent to apiserver and approval was received.</li>
+<li>The Kubelet was informed of the new secure connection details.</li>
+<li>Control plane (master) label and taint were applied to the new node.</li>
+<li>The Kubernetes control plane instances scaled up.</li>
+<li>A new etcd member was added to the local/stacked etcd cluster.</li>
+</ul>
+
+<p>To start administering your cluster from this node, you need to run the following as a regular user:</p>
+
+<pre><code>    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+
+<p>Run &lsquo;kubectl get nodes&rsquo; to see this node join the cluster.</p>
+
+<pre><code>按照安装提示，执行一下 `kubectl get nodes` 查看一下第二个master是否已经加入到控制平面
+10.10.10.82。此时我再次遇到一个坑。(后来发现安装提示上已经提示要执行这个操作了。)
+
+</code></pre>
+
+<p>shell
+[root@hyk011 ~]# kubectl get nodes
+The connection to the server localhost:8080 was refused - did you specify the right host or port?</p>
+
+<pre><code>
+#### 解决K8S集群报错：The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+解决方法：
+
+</code></pre>
+
+<p>shell
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config</p>
+
+<pre><code>
+再次查看节点信息即可看到：
+
+</code></pre>
+
+<p>shell
+[root@hyk012 ~]# kubectl get nodes
+NAME     STATUS     ROLES    AGE   VERSION
+hyk010   NotReady   master   57m   v1.18.3
+hyk011   NotReady   master   46m   v1.18.3
+hyk012   NotReady   master   34m   v1.18.3
+hyk020   NotReady   <none>   65s   v1.18.3</p>
+
+<pre><code>
+&gt; 注意：此时四个节点均为NotReady状态，其中hyk020为工作节点，其余为master节点
+
+
+
+#### 安装CNI 插件
+
+1、应用您选择的 CNI 插件： [请遵循以下指示](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network) 安装 CNI 提供程序。如果适用，请确保配置与 kubeadm 配置文件中指定的 Pod CIDR 相对应。
+
+在此示例中，我们使用 Weave Net：
+
+</code></pre>
+
+<p>shell
+kubectl apply -f &ldquo;<a href="https://cloud.weave.works/k8s/net?k8s-version=$(kubectl">https://cloud.weave.works/k8s/net?k8s-version=$(kubectl</a> version | base64 | tr -d &lsquo;\n&rsquo;)&rdquo;</p>
+
+<pre><code>
+
+
+2、输入以下内容，并查看 pods 的控制平面组件启动：
+
+</code></pre>
+
+<p>shell
+[root@hyk010 lib]# kubectl get pod -n kube-system -w
+NAME                             READY   STATUS              RESTARTS   AGE
+coredns-7ff77c879f-5f42f         <sup>1</sup>&frasl;<sub>1</sub>     Running             0          77m
+coredns-7ff77c879f-7zjdf         <sup>1</sup>&frasl;<sub>1</sub>     Running             0          77m
+etcd-hyk010                      <sup>1</sup>&frasl;<sub>1</sub>     Running             3          77m
+etcd-hyk011                      <sup>1</sup>&frasl;<sub>1</sub>     Running             0          66m
+etcd-hyk012                      <sup>1</sup>&frasl;<sub>1</sub>     Running             0          53m
+kube-apiserver-hyk010            <sup>1</sup>&frasl;<sub>1</sub>     Running             15         77m
+kube-apiserver-hyk011            <sup>1</sup>&frasl;<sub>1</sub>     Running             0          66m
+kube-apiserver-hyk012            <sup>1</sup>&frasl;<sub>1</sub>     Running             1          53m
+kube-controller-manager-hyk010   <sup>1</sup>&frasl;<sub>1</sub>     Running             5          77m
+kube-controller-manager-hyk011   <sup>1</sup>&frasl;<sub>1</sub>     Running             0          66m
+kube-controller-manager-hyk012   <sup>1</sup>&frasl;<sub>1</sub>     Running             0          53m
+kube-proxy-5tlnk                 <sup>1</sup>&frasl;<sub>1</sub>     Running             0          53m
+kube-proxy-fgthp                 <sup>1</sup>&frasl;<sub>1</sub>     Running             0          77m
+kube-proxy-h8f4w                 <sup>1</sup>&frasl;<sub>1</sub>     Running             0          20m
+kube-proxy-wbftx                 <sup>1</sup>&frasl;<sub>1</sub>     Running             0          66m
+kube-scheduler-hyk010            <sup>1</sup>&frasl;<sub>1</sub>     Running             5          77m
+kube-scheduler-hyk011            <sup>1</sup>&frasl;<sub>1</sub>     Running             0          66m
+kube-scheduler-hyk012            <sup>1</sup>&frasl;<sub>1</sub>     Running             0          53m
+weave-net-62lkg                  <sup>2</sup>&frasl;<sub>2</sub>     Running             0          12m
+weave-net-9flxv                  0/2     ContainerCreating   0          12m
+weave-net-hkpmf                  <sup>2</sup>&frasl;<sub>2</sub>     Running             0          12m
+weave-net-lk4pk                  0/2     ContainerCreating   0          12m</p>
+
+<pre><code>
+可以看到，coredns、weave-net都已启动，并且Node都处于Ready状态
+
+</code></pre>
+
+<p>shell
+[root@hyk010 lib]# kubectl get node
+NAME     STATUS     ROLES    AGE   VERSION
+hyk010   Ready      master   79m   v1.18.3
+hyk011   Ready      master   68m   v1.18.3
+hyk012   Ready      master   55m   v1.18.3
+hyk020   Ready      <none>   22m   v1.18.3
+```</p>
+
+<p>至此，初步安装完成并完成官网任务 -&gt; <a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/high-availability/">利用 kubeadm 创建高可用集群</a></p>
+
+<h3 id="参考文献">参考文献</h3>
+
+<p><a href="https://blog.csdn.net/twingao/article/details/105382305">https://blog.csdn.net/twingao/article/details/105382305</a> (页面已缓存到本地，见部署参考)</p>
+
+<p>官网创建高可用集群：<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/high-availability/">https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/high-availability/</a></p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1716 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>0001-01-01 08:05 &#43;0805</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h">Read other posts</span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+                        <span class="button previous">
+                            <a href="https://likego.club/posts/2019/10/golang%E8%AF%AD%E6%B3%95%E7%89%B9%E7%82%B9/">
+                                <span class="button__icon">←</span>
+                                <span class="button__text">Golang语法特点</span>
+                            </a>
+                        </span>
+                    
+
+                    
+                        <span class="button next">
+                            <a href="https://likego.club/posts/1/01/">
+                                <span class="button__text"></span>
+                                <span class="button__icon">→</span>
+                            </a>
+                        </span>
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2020</span>
+            
+                <span><a href="https://likego.club/">YongKang.H</a></span>
+            
+            <span>superqbb</span>
+            <span> <a href="https://likego.club/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">rhazdon</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="https://likego.club/bundle.min.4c3fb12a087ceed4a52cb5d57068a9795c7069617a01ca70f788052ad66e1791779e6c72686e1dc0ca13dc03b0203204b6566bb0dd1ee80de2b7ff4d8fe53db2.js" integrity="sha512-TD&#43;xKgh87tSlLLXVcGipeVxwaWF6Acpw94gFKtZuF5F3nmxyaG4dwMoT3AOwIDIEtlZrsN0e6A3it/9Nj&#43;U9sg=="></script>
+
+
+
+    </body>
+</html>
